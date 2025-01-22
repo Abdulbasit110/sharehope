@@ -24,10 +24,7 @@ const generateAccessAndRefreshToken = async (userId) => {
 };
 
 // Sign Up Route
-<<<<<<< HEAD
-=======
 
->>>>>>> 98aa065f38e7bea363c441f540fda6e5dad3f391
 export const registerUser = asyncHandler(async (req, res) => {
 
 // GET DATA FROM USER
@@ -170,83 +167,45 @@ export const logoutUser = asyncHandler(async (_, res) => {
 // VERIFY EMAIL
 
 export const verifyEmail = asyncHandler(async (req, res) => {
-  // GET OTP AND USER ID FROM USER
-
   const { otp, userId } = req.body;
-  // console.log(otp,userId)
-
-  // CHECK FOR USER ID AND OTP
 
   if (!userId || !otp) {
-    throw Error("Empty otp details are not allowed");
+    throw new Error("Empty otp details are not allowed");
   } else {
-    // FIND OTP AND USER
-    const verificationResponse = await UserOTP.find({
-      userId,
-    });
-    // console.log(verificationResponse);
-    // CHECK FOR OTP AND USER
+    const verificationResponse = await UserOTP.find({ userId });
+
     if (verificationResponse.length <= 0) {
-      throw Error(
-        "Account record does'nt exit or has been verified already. Please log in."
-      );
+      throw new Error("Account record doesn't exist or has been verified already. Please log in.");
     } else {
       const { expiresAt } = verificationResponse[0];
-
       const hashedOTP = verificationResponse[0].otp;
 
       if (expiresAt < Date.now()) {
         await UserOTP.deleteMany({ userId });
-
         throw new Error("Code has expired. Please request again.");
       } else {
         const isOTPMatched = await bcrypt.compare(otp, hashedOTP);
         if (!isOTPMatched) {
           throw new Error("Invalid OTP. Please try again.");
         } else {
-          const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            { isVerified: true },
-            { new: true }
-          );
+          const updatedUser = await User.findByIdAndUpdate(userId, { isVerified: true }, { new: true });
           await UserOTP.deleteMany({ userId });
 
           res.status(200).json({
             _id: updatedUser._id,
             username: updatedUser.username,
             email: updatedUser.email,
-            // // role: updatedUser.role,
-            // userImg: updatedUser.img,
-            // title: updatedUser.title,
             isVerified: updatedUser.isVerified,
           });
         }
       }
     }
-<<<<<<< HEAD
-  });
-  
-// RESEND OTP
-  
-export  const resendOTP = asyncHandler( async (req, res) => {
-    // GET USER ID AND EMAIL FROM USER
-    const {  userId, email } = req.body;
-      // console.log("Resend Email",email);
-  
-      if (!userId || !email) {
-          throw Error("Empty user details are not allowed");
-      } else {
-          await UserOTP.deleteMany({ userId });
-  
-          await sendEmail({ _id: userId , email }, res);
-          return res
-          .status(200)
-          .json(new ApiResponse(200, {}, "Verification Code Sent Successfully"));
-      }
-  });
-=======
   }
 });
+  
+
+
+  
 
 export // GET CURRENT USER
 
@@ -360,4 +319,3 @@ export const resendOTP = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, {}, "Verification Code Sent Successfully"));
   }
 });
->>>>>>> 98aa065f38e7bea363c441f540fda6e5dad3f391
