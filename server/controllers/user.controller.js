@@ -24,11 +24,15 @@ const generateAccessAndRefreshToken = async (userId) => {
 };
 
 // Sign Up Route
+<<<<<<< HEAD
 
+=======
+>>>>>>> c5e96d93be8cc828507d1fbf702f47fa12f5a4dc
 export const registerUser = asyncHandler(async (req, res) => {
+  // GET DATA FROM USER
 
-// GET DATA FROM USER
-const { email, username, password } = req.body;
+  const { email, name: username, password } = req.body;
+
   // VALIDATION - NOT EMPTY
 
   if ([email, username, password].some((filed) => filed?.trim() === "")) {
@@ -47,27 +51,27 @@ const { email, username, password } = req.body;
 
   // CHECK FOR AVATAR
 
-  const avatarLocalPath = req.file?.path;
+  // const avatarLocalPath = req.file?.path;
 
   // MULTER CHECK
   // console.log(req.file)
 
-  if (!avatarLocalPath) {
-    throw new ApiError(400, "Avatar file is required");
-  }
+  // if (!avatarLocalPath) {
+  //   throw new ApiError(400, "Avatar file is required");
+  // }
   // UPLOAD CLOUDINARY
 
-  const avatar = await uploadCloudinary(avatarLocalPath);
+  // const avatar = await uploadCloudinary(avatarLocalPath);
 
-  if (!avatar) {
-    throw new ApiError(400, "Avatar file is required on CLoudinary");
-  }
+  // if (!avatar) {
+  //   throw new ApiError(400, "Avatar file is required on CLoudinary");
+  // }
+
   // CREATE OBJECT
   const user = await User.create({
     email,
-    avatar: avatar.url,
     password,
-    username: username,
+    username,
   });
   // REMOVE PASSWORD RESPONSE
   const createdUser = await User.findById(user._id).select("-password");
@@ -209,17 +213,17 @@ export const verifyEmail = asyncHandler(async (req, res) => {
 
 export // GET CURRENT USER
 
-const getCurrentUser = asyncHandler(async (req, res) => {
-  // RETURN RESPONSE
-  const user = req.user;
-  if (!user) {
-    throw new ApiError(401, "Unauthorized. Please login");
-  }
+  const getCurrentUser = asyncHandler(async (req, res) => {
+    // RETURN RESPONSE
+    const user = req.user;
+    if (!user) {
+      throw new ApiError(401, "Unauthorized. Please login");
+    }
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, user, "User Fetched Successfully"));
-});
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user, "User Fetched Successfully"));
+  });
 
 // UPDATE AVATAR
 
