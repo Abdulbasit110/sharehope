@@ -1,3 +1,4 @@
+import { Donation } from "../models/donation.model.js";
 import { Ngo } from "../models/ngo.model.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -73,6 +74,44 @@ export const deleteNgo=asyncHandler(async (req,res)=>{
             200,
             {},
             "NGO deleted successfully"
+        )
+    )
+})
+
+    // DONATION
+
+// GET ALL DONATIONS
+
+export const getAllDonations=asyncHandler(async(_,res)=>{
+    const donation=await Donation.find();
+    console.log(donation)
+    if(donation.length==0){
+        throw new ApiError(400,"No Donation found")
+    }
+    res
+   .status(200)
+   .json(
+        new ApiResponse(
+            200,
+            donation,
+            "Donations fetched successfully"
+        )
+    )
+})
+
+// DELETE DONATION
+
+export const deleteDonation=asyncHandler(async (req,res)=>{
+    const donation=await Donation.findById(req.params.id);
+    if(!donation){
+        throw new ApiError(404,"Donation not found")
+    }
+    await donation.deleteOne();
+    res.status(200).json(
+        new ApiResponse(
+            200,
+            {},
+            "Donation deleted successfully"
         )
     )
 })

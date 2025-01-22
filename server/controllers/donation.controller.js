@@ -8,10 +8,12 @@ import {ApiResponse} from '../utils/ApiResponse.js';
 export const createDonation = async (req, res, next) => {
   try {
     const { ngoId, donorId, items, address, description , deliveryResponsible } = req.body;
+    // console.log(req.body.ngoId)
 
     // Validate if NGO and Donor exist
     const ngo = await Ngo.findById(ngoId);
     const donor = await User.findById(donorId);
+    
 
     if (!ngo || !donor) {
       throw new ApiError(404, "NGO or Donor not found");
@@ -41,6 +43,7 @@ export const createDonation = async (req, res, next) => {
     }
 
     // Create new donation record
+
     const donation = await new Donation({
       ngo: ngoId,
       donor: donorId,
@@ -66,12 +69,15 @@ export const createDonation = async (req, res, next) => {
   }
 };
 
-// Get all donations
-export const getAllDonations = async (req, res, next) => {
+// Get My donations
+export const getMyDonations = async (req, res, next) => {
   try {
-    const donations = await Donation.find().populate('ngo donor'); // Populate NGO and Donor details
+    const donorId = req.user._id;
+    console.log("Logged-in donor ID:", donorId);
 
-    if (!donations) {
+    const donations = await Donation.find({ donor: donorId }).populate('ngo donor');
+
+    if (!donations || donations.length === 0) {
       throw new ApiError(404, "No donations found");
     }
 
@@ -87,10 +93,12 @@ export const getAllDonations = async (req, res, next) => {
   }
 };
 
+
 // Get donation by ID
 export const getDonationById = async (req, res, next) => {
   try {
     const { donationId } = req.params; // Assuming donationId is passed as a parameter
+    console.log(donationId)
 
     const donation = await Donation.findById(donationId).populate('ngo donor');
 
@@ -114,7 +122,7 @@ export const getDonationById = async (req, res, next) => {
 export const updateDonationStatus = async (req, res, next) => {
   try {
     const { donationId } = req.params;
-    const { status } = req.body;  // New status to update
+    const { status } = req.body;  
 
     if (!status || !['pending', 'approved', 'delivered', 'cancelled'].includes(status)) {
       throw new ApiError(400, "Invalid status");
