@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     trim: true,
-    index: true, // for enabling the searching field we use (index) .
+    index: true, // for enabling the searching field we use (index)
   },
   role: {
     type: String,
@@ -29,12 +29,12 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
   avatar: {
-    type: String, // Cloundinary URL
-    // required: true,
+    type: String, // Cloudinary URL
   },
-},{
+}, {
   timestamps: true,
 });
+
 
 
 // HASHING PASSWORD

@@ -10,7 +10,7 @@ router.route('/login').post(loginUser)
 // LOGOUT
 router.route("/logout").post(verifyJWT, logoutUser);
 // GET USER
-router.route("/").get(getCurrentUser);
+router.route("/").get(verifyJWT , getCurrentUser);
 // UPDATE AVATAR
 router
   .route("/update-avatar")

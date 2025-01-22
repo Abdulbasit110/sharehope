@@ -24,9 +24,13 @@ app.use(cookieParser());
 // ROUTES IMPORT ;
 
 import userRoutes from './routes/user.routes.js';
+import adminRoutes from './routes/admin.routes.js';
+import donationsRoutes from './routes/donations.routes.js';
 
 // ROUTES DICLERATION ;
 
 app.use('/api/v1/users',userRoutes);
+app.use('/api/v1/admin',adminRoutes);
+app.use('/api/v1/donation',donationsRoutes);
 
 export { app };
