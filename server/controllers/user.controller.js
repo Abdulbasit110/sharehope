@@ -5,16 +5,14 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadCloudinary } from "../utils/cloudinary.js";
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 
-  // TOKENS
+// TOKENS
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
     const user = await User.findById(userId);
     const accessToken = user.generateAccessToken();
-
-
 
     return { accessToken };
   } catch (error) {
@@ -26,6 +24,10 @@ const generateAccessAndRefreshToken = async (userId) => {
 };
 
 // Sign Up Route
+<<<<<<< HEAD
+=======
+
+>>>>>>> 98aa065f38e7bea363c441f540fda6e5dad3f391
 export const registerUser = asyncHandler(async (req, res) => {
 
 // GET DATA FROM USER
@@ -90,7 +92,7 @@ const { email, username, password } = req.body;
     );
 });
 
-  // SING IN ROUTE
+// SING IN ROUTE
 
 export const loginUser = asyncHandler(async (req, res) => {
   // GET DATA FROM USER
@@ -123,13 +125,9 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   // ACCESS AND REFRESH TOKEN
 
-  const { accessToken} = await generateAccessAndRefreshToken(
-    user._id
-  );
+  const { accessToken } = await generateAccessAndRefreshToken(user._id);
 
-  const loggedInUser = await User.findById(user._id).select(
-    "-password"
-  );
+  const loggedInUser = await User.findById(user._id).select("-password");
 
   // GENERATES COOKIES
 
@@ -153,64 +151,79 @@ export const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
-  // VERIFY EMAIL
+// LOGOUT
 
-export  const verifyEmail = asyncHandler(async (req, res) => {
+export const logoutUser = asyncHandler(async (_, res) => {
+  const options = {
+    http: true,
+    secure: true,
+  };
 
-    // GET OTP AND USER ID FROM USER
-  
-    const { otp, userId } = req.body;
-    // console.log(otp,userId)
-  
-    // CHECK FOR USER ID AND OTP
-  
-    if (!userId || !otp) {
-      throw Error("Empty otp details are not allowed");
+  //   RETURN RESPONSE
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .json(new ApiResponse(200, {}, "User Logged Out"));
+});
+
+// VERIFY EMAIL
+
+export const verifyEmail = asyncHandler(async (req, res) => {
+  // GET OTP AND USER ID FROM USER
+
+  const { otp, userId } = req.body;
+  // console.log(otp,userId)
+
+  // CHECK FOR USER ID AND OTP
+
+  if (!userId || !otp) {
+    throw Error("Empty otp details are not allowed");
+  } else {
+    // FIND OTP AND USER
+    const verificationResponse = await UserOTP.find({
+      userId,
+    });
+    // console.log(verificationResponse);
+    // CHECK FOR OTP AND USER
+    if (verificationResponse.length <= 0) {
+      throw Error(
+        "Account record does'nt exit or has been verified already. Please log in."
+      );
     } else {
-      // FIND OTP AND USER 
-      const verificationResponse = await UserOTP.find({
-        userId,
-      });
-      // console.log(verificationResponse);
-      // CHECK FOR OTP AND USER
-      if (verificationResponse.length <= 0) {
-        throw Error(
-          "Account record does'nt exit or has been verified already. Please log in."
-        );
+      const { expiresAt } = verificationResponse[0];
+
+      const hashedOTP = verificationResponse[0].otp;
+
+      if (expiresAt < Date.now()) {
+        await UserOTP.deleteMany({ userId });
+
+        throw new Error("Code has expired. Please request again.");
       } else {
-        const { expiresAt } = verificationResponse[0];  
-  
-        const hashedOTP = verificationResponse[0].otp;
-  
-        if (expiresAt < Date.now()) {
-          await UserOTP.deleteMany({ userId });
-  
-          throw new Error("Code has expired. Please request again.");
+        const isOTPMatched = await bcrypt.compare(otp, hashedOTP);
+        if (!isOTPMatched) {
+          throw new Error("Invalid OTP. Please try again.");
         } else {
-          const isOTPMatched = await bcrypt.compare( otp , hashedOTP );
-          if (!isOTPMatched) {
-            throw new Error( "Invalid OTP. Please try again." );
-          } else {
-            const updatedUser = await User.findByIdAndUpdate(
-              userId,
-              { isVerified: true },
-              { new: true }
-            );
-            await UserOTP.deleteMany({ userId });
-  
-            res.status(200).json({
-              _id: updatedUser._id,
-              username: updatedUser.username,
-              email: updatedUser.email,
-              // // role: updatedUser.role,
-              // userImg: updatedUser.img,
-              // title: updatedUser.title,
-              isVerified: updatedUser.isVerified,
-            });
-          }
+          const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { isVerified: true },
+            { new: true }
+          );
+          await UserOTP.deleteMany({ userId });
+
+          res.status(200).json({
+            _id: updatedUser._id,
+            username: updatedUser.username,
+            email: updatedUser.email,
+            // // role: updatedUser.role,
+            // userImg: updatedUser.img,
+            // title: updatedUser.title,
+            isVerified: updatedUser.isVerified,
+          });
         }
       }
     }
+<<<<<<< HEAD
   });
   
 // RESEND OTP
@@ -231,3 +244,120 @@ export  const resendOTP = asyncHandler( async (req, res) => {
           .json(new ApiResponse(200, {}, "Verification Code Sent Successfully"));
       }
   });
+=======
+  }
+});
+
+export // GET CURRENT USER
+
+const getCurrentUser = asyncHandler(async (req, res) => {
+  // RETURN RESPONSE
+  const user = req.user;
+  if (!user) {
+    throw new ApiError(401, "Unauthorized. Please login");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User Fetched Successfully"));
+});
+
+// UPDATE AVATAR
+
+export const updateUserAvatar = asyncHandler(async (req, res) => {
+  //  GET NEW AVATAR FROM USER
+
+  const avatarLoacalPath = req.file?.path;
+
+  // CEHCK FOR THE LOCAL AVATAR
+
+  if (!avatarLoacalPath) {
+    throw new ApiError(400, "Avatar file is misssing");
+  }
+
+  // UPLOAD ON CLOUDINARY
+
+  const avatar = await uploadCloudinary(avatarLoacalPath);
+
+  // CHECK FOR AVATAR
+
+  if (!avatar) {
+    throw new ApiError(400, "Error while uploading on avatar");
+  }
+
+  // FIND AND UPDATE CURRENT USER AVATAR
+
+  const user = await User.findOneAndUpdate(
+    req.user?._id,
+    {
+      $set: { avatar: avatar.url },
+    },
+    { new: true }
+  ).select("-password");
+
+  // RETURN RESPONSE
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Avatar Image Updated Succesfully"));
+});
+
+// CHANGE PASSWORD
+
+export const changePassword = asyncHandler(async (req, res) => {
+  // GET NEW AND OLD PASSWORD
+
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    throw new ApiError(400, "All Required");
+  }
+
+  // GET CURRENT USER
+
+  const user = await User.findById(req.user?._id);
+
+  if (!user) {
+    throw new ApiError("No User Found");
+  }
+
+  // CHECK OLD PSWRD
+
+  const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+
+  if (!isPasswordCorrect) {
+    throw new ApiError(400, "Invalid old Password");
+  }
+
+  // REPLACE OLD TO NEW PSWRD
+
+  user.password = newPassword;
+
+  await user.save({ validateBeforeSave: false });
+
+  // RETURN RESPONSE
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password Successfully Changed"));
+});
+
+// RESEND OTP
+
+export const resendOTP = asyncHandler(async (req, res) => {
+  // GET USER ID AND EMAIL FROM USER
+  const { userId, email } = req.body;
+  // console.log("Resend Email",email);
+
+  if (!userId || !email) {
+    throw Error("Empty user details are not allowed");
+  } else {
+    await UserOTP.deleteMany({ userId });
+
+    await sendEmail({ _id: userId, email }, res);
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Verification Code Sent Successfully"));
+  }
+});
+>>>>>>> 98aa065f38e7bea363c441f540fda6e5dad3f391
