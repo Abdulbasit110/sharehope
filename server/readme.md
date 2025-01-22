@@ -20,7 +20,6 @@ Before you begin, ensure you have the following installed:
 - **Node.js** (v14 or later)
 - **MongoDB** (Local or Cloud-based)
 - **Vercel CLI** (if deploying with Vercel)
-
 ---
 
 ## Installation
