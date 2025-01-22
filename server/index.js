@@ -18,3 +18,7 @@ connectDB()
     console.log(`Connection Failed : ${err}`);
     
 });
+
+
+//just testing
+export default app
