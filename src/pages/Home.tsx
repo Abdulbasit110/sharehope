@@ -63,7 +63,7 @@ export default function Home() {
       {/* Impact Stats */}
       <section className="bg-green-50 py-12 rounded-lg px-4">
         <h2 className="text-3xl md:text-4xl font-extrabold text-center text-gray-800 mb-8">
-          Together, We Make an Impact
+          Together, We Make an Impact!
         </h2>
         <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto text-center">
           {[
