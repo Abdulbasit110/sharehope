@@ -7,7 +7,7 @@ import ApiResponse from './ApiResponse';
 // Create a new donation
 export const createDonation = async (req, res, next) => {
   try {
-    const { ngoId, donorId, items, address, description } = req.body;
+    const { ngoId, donorId, items, address, description , deliveryResponsible } = req.body;
 
     // Validate if NGO and Donor exist
     const ngo = await Ngo.findById(ngoId);
@@ -17,13 +17,37 @@ export const createDonation = async (req, res, next) => {
       throw new ApiError(404, "NGO or Donor not found");
     }
 
+    // CHECK FOR ADRESS AND ITEMS AND DESCRIPON
+
+    if (!address ||!items || !deliveryResponsible) {
+      throw new ApiError(400, "Address, items and deliveryResponsible are required");
+    }
+
+    // CHECK FOR ITEMS AND DESCRIPTION INNER FIELDS
+
+    if (Array.isArray(items)) {
+      items.forEach((item) => {
+        if (!item.name ||!item.quantity ||!item.condition) {
+          throw new ApiError(400, "Each item must have name, quantity, and condition");
+        }
+      });
+    } else {
+      throw new ApiError(400, "Items must be an array");
+    }
+
+    // CHECK FOR ADRESS INNER FIELDs
+    if (typeof address!== "object" ||!address.street ||!address.city ||!address.state) {
+      throw new ApiError(400, "Address must be an object with street, city, state fields");
+    }
+
     // Create new donation record
-    const donation = new Donation({
+    const donation = await new Donation({
       ngo: ngoId,
       donor: donorId,
       items: items,
       address: address,
       description: description || "",
+      deliveryResponsible:deliveryResponsible
     });
 
     // Save donation to database

@@ -35,10 +35,12 @@ app.use(cookieParser());
 
 import userRoutes from './routes/user.routes.js';
 import ngoRoutes from './routes/ngo.routes.js';
+import donationRoutes from './routes/donations.routes.js';
 
 // ROUTES DICLERATION ;
 
 app.use('/api/v1/users',userRoutes);
 app.use('/api/v1/ngo', ngoRoutes);
+app.use('/api/v1/donation', donationRoutes);
 
 export { app };

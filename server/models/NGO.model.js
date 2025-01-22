@@ -84,9 +84,15 @@ const ngoSchema = new mongoose.Schema(
       min: [1800, 'Establishment year should be after 1800'],
       max: [new Date().getFullYear(), 'Establishment year cannot be in the future'],
     },
+    avatar:{
+      type: String,
+    }
   },
   { timestamps: true }
 );
+
+
+
 
 
 

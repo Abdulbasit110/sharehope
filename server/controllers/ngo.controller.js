@@ -42,22 +42,22 @@ const { email, ngoname, password, address, phone, description, location, status,
     }
 
     // CHECK FOR AVATAR
-    const avatarLocalPath = req.file?.path;
+    // const avatarLocalPath = req.file?.path;
 
-    // MULTER CHECK
-    if (!avatarLocalPath) {
-    throw new ApiError(400, "Avatar file is required");
-    }
+    // // MULTER CHECK
+    // if (!avatarLocalPath) {
+    // throw new ApiError(400, "Avatar file is required");
+    // }
 
     // UPLOAD CLOUDINARY
-    const avatar = await uploadCloudinary(avatarLocalPath);
-    if (!avatar) {
-    throw new ApiError(400, "Avatar file is required on CLoudinary");
-    }
+    // const avatar = await uploadCloudinary(avatarLocalPath);
+    // if (!avatar) {
+    // throw new ApiError(400, "Avatar file is required on CLoudinary");
+    // }
 
     // CREATE OBJECT
     const user = await Ngo.create({
-    avatar: avatar.url,
+    // avatar: avatar.url,
     ngoname,
     email,
     password,

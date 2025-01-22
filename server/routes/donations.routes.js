@@ -1,12 +1,13 @@
 import express from 'express';
-import { verifyJWT } from '../middleware/isAuth.middleware.js';
-import { createDonation, getMyDonation } from '../controllers/donation.controller.js';
+// import { createDonation, getAllDonations, getDonationById, updateDonationStatus, deleteDonation } from '../controllers/donation.controller.js'
 
 const router = express.Router();
-<<<<<<< HEAD
-router.route('/my-donation').get(verifyJWT,getMyDonation)
-router.route('/my-donation').get(verifyJWT,createDonation)
-=======
-// router.route('my-donation').get(getMyDonation)
->>>>>>> c5e96d93be8cc828507d1fbf702f47fa12f5a4dc
+
+// // Routes for Donation
+// router.post('/donations', createDonation);           // Create a donation
+// router.get('/donations', getAllDonations);           // Get all donations
+// router.get('/donations/:donationId', getDonationById); // Get donation by ID
+// router.put('/donations/:donationId/status', updateDonationStatus); // Update donation status
+// router.delete('/donations/:donationId', deleteDonation);  // Delete a donation
+
 export default router;
