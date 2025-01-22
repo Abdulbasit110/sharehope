@@ -6,12 +6,22 @@ const app = express();
 
 // CORS
 
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true,
-  })
-);
+const allowedOrigins = ["http://localhost:5174"];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      console.error(`Blocked by CORS: ${origin}`);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 
 // MIDDLEWARES
 
@@ -29,8 +39,8 @@ import donationsRoutes from './routes/donations.routes.js';
 
 // ROUTES DICLERATION ;
 
-app.use('/api/v1/users',userRoutes);
-app.use('/api/v1/admin',adminRoutes);
-app.use('/api/v1/donation',donationsRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/donation', donationsRoutes);
 
 export { app };
