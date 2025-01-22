@@ -5,7 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
 import { useAuthStore } from '../store/auth';
-import image from '../assets/images/clothing-donation.jpg'
+import image from '../assets/images/clothing-donation.jpg';
+
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -29,7 +30,6 @@ export default function Login() {
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     try {
-      // Mock API call for login
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -49,24 +49,25 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-50 via-blue-50 to-green-50">
       <div className="flex shadow-lg rounded-lg overflow-hidden bg-white max-w-4xl w-full">
         {/* Left Image Section */}
-        <div className="hidden md:block w-1/2">
+        <div className="hidden md:block w-1/2 relative">
           <img
-            src= {image}
-            alt="cloth donation Illustration"
+            src={image}
+            alt="Cloth donation illustration"
             className="w-full h-full object-cover"
           />
+          <div className="absolute inset-0 bg-green-900 bg-opacity-20" />
         </div>
 
         {/* Right Form Section */}
         <div className="flex-1 p-8 md:p-12">
-          <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-            Welcome Back!
+          <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-6">
+            Welcome Back to <span className="text-green-600">Your Dashboard!</span>
           </h1>
           <p className="text-sm text-gray-600 text-center mb-8">
-            Enter your credentials to access your account.
+            Log in to continue contributing to meaningful causes and making a difference!
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -82,7 +83,7 @@ export default function Login() {
                 type="email"
                 id="email"
                 {...register('email')}
-                className="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                className="mt-1 block w-full px-4 py-2 rounded-md bg-gray-50 border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                 placeholder="Enter your email"
               />
               {errors.email && (
@@ -102,7 +103,7 @@ export default function Login() {
                 type="password"
                 id="password"
                 {...register('password')}
-                className="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                className="mt-1 block w-full px-4 py-2 rounded-md bg-gray-50 border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                 placeholder="Enter your password"
               />
               {errors.password && (
@@ -114,7 +115,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center py-2 px-4 rounded-md text-white font-medium bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+              className="w-full flex justify-center py-2 px-4 rounded-md text-white font-medium bg-green-600 hover:bg-green-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 transition-transform duration-200"
             >
               {isLoading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -127,8 +128,8 @@ export default function Login() {
           {/* Footer Section */}
           <p className="mt-6 text-sm text-center text-gray-600">
             Don't have an account?{' '}
-            <a href="/signup" className="text-green-600 hover:underline">
-              Sign up
+            <a href="/signup" className="text-green-700 font-bold hover:underline">
+              Create an Account
             </a>
           </p>
         </div>

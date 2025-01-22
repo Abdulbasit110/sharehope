@@ -5,7 +5,6 @@ import Layout from './components/Layout';
 // import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
-// import Register from './pages/Register';
 // import Dashboard from './pages/Dashboard';
 import Donations from './pages/Donations';
 import Disposals from './pages/Disposals';
@@ -13,6 +12,10 @@ import Vouchers from './pages/Vouchers';
 // import AdminDashboard from './pages/admin/Dashboard';
 import AdminNGOs from './pages/admin/NGOs';
 import AdminBrands from './pages/admin/Brands';
+import Registration from './pages/Register';
+import NgoRegistration from './components/NgoRegistration';
+import DonorRegistration from './components/DonorRegistration';
+import About from './components/About';
 // import AdminUsers from './pages/admin/Users';
 
 const queryClient = new QueryClient();
@@ -25,6 +28,10 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
+            <Route path="registration" element={<Registration/>} />
+            <Route path="register/ngo" element={<NgoRegistration/>} />
+            <Route path="register/donor" element={<DonorRegistration/>} />
+            <Route path="About" element={<About/>} />
             {/* <Route path="register" element={<Register />} /> */}
             
             {/* Protected User Routes */}
