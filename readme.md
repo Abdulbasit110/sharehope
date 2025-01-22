@@ -152,7 +152,7 @@ We welcome contributions! To contribute:
 ## Contact
 For any questions or support, contact:
 - **Email:** abdulbasit4408944@gmail.com
-- **GitHub:** [Your GitHub Profile](https://github.com/abdulbasit110)
+- **GitHub:** [GitHub Profile](https://github.com/abdulbasit110)
 
 
 
