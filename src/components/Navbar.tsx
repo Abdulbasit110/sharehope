@@ -4,10 +4,8 @@ import { Recycle, LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navbar() {
-  const { logout } = useAuthStore();
-const user = {
-  role :"user"
-}
+  const { user,logout } = useAuthStore();
+
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
