@@ -7,6 +7,7 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
   try {
     const { email, password, name } = req.body;
+    console.log("data ==>", req.body);
     
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -34,7 +35,7 @@ router.post('/register', async (req, res) => {
     });
   } catch (error) {
     console.log("error ==>", error.message);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: error.message });
   }
 });
 

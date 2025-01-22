@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -6,6 +7,8 @@ import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
 import { useAuthStore } from '../store/auth';
 import image from '../assets/images/clothing-donation.jpg';
+import { axiosInstance } from '../lib/axios';
+import { toast } from 'react-toastify';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -30,18 +33,13 @@ export default function Login() {
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
+      const response = await axiosInstance.post("/users/login", data);
+      console.log("response ==>", response);
 
-      if (!response.ok) throw new Error('Login failed');
-
-      const { user, token } = await response.json();
       setAuth(user, token);
       navigate(user.role === 'admin' ? '/admin' : '/dashboard');
     } catch (error) {
+      toast.error(error?.response?.data?.message);
       console.error('Login error:', error);
     } finally {
       setIsLoading(false);

@@ -16,6 +16,7 @@ import Layout from './components/Layout';
 import NgoRegistration from './components/NgoRegistration';
 import DonorRegistration from './components/DonorRegistration';
 import About from './components/About';
+import VerificationPage from './pages/Verifcation';
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ function App() {
             <Route path="registration" element={<Registration/>} />
             <Route path="register/ngo" element={<NgoRegistration/>} />
             <Route path="register/donor" element={<DonorRegistration/>} />
+            <Route path="register/verification" element={<VerificationPage />} />
             <Route path="About" element={<About/>} />
             
             {/* Protected User Routes */}

@@ -1,7 +1,7 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { axiosInstance } from '../lib/axios';
 
 const ngoSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters long').max(100, 'Name cannot exceed 100 characters'),
@@ -28,9 +28,15 @@ function NgoRegistration() {
     resolver: zodResolver(ngoSchema),
   });
 
-  const onSubmit = (data: NgoForm) => {
-    console.log('NGO Registration Data:', data);
-    // Handle form submission (e.g., send to API)
+  const onSubmit = async (data: NgoForm) => {
+    try {
+      console.log('NGO Registration Data:', data);
+      const res = await axiosInstance.post("/ngo/register", data);
+      console.log('NGO Registration Response:', res.data);
+      // Handle form submission (e.g., send to API)
+    } catch (error) {
+      console.error('NGO Registration Error:', error);
+    }
   };
 
   return (

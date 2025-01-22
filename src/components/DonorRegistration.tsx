@@ -1,16 +1,18 @@
+// @ts-nocheck
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { axiosInstance } from '../lib/axios';
+import { toast } from 'react-toastify';
 
 const donorSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Invalid email address'),
-  phone: z.string().min(10, 'Phone number must be at least 10 digits'),
-  address: z.string().min(1, 'Address is required'),
-  city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
-  zipCode: z.string().regex(/^\d{5}$/, 'Invalid ZIP Code'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  confirmPassword: z.string().min(6, 'Password must be at least 6 characters'),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords must match",
+  path: ["confirmPassword"],
 });
 
 type DonorForm = z.infer<typeof donorSchema>;
@@ -27,10 +29,10 @@ function DonorRegistration() {
   const onSubmit = async (data: DonorForm) => {
     try {
       console.log("data ==>", data);
-      const res = await axiosInstance.post("/auth/register", data);
+      const res = await axiosInstance.post("/users/register", data); // todo
       console.log("res ==>", res);
     } catch (error) {
-      
+      toast.error(error.response.data.message)
     }
   };
 
@@ -79,8 +81,48 @@ function DonorRegistration() {
             {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>}
           </div>
 
-          {/* Phone Field */}
+          {/* Password Input */}
           <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              {...register('password')}
+              className="mt-1 block w-full px-4 py-2 rounded-md bg-gray-50 border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+              placeholder="Enter your password"
+            />
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+            )}
+          </div>
+
+          {/* Confirm Password Input */}
+          <div>
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              {...register('confirmPassword')}
+              className="mt-1 block w-full px-4 py-2 rounded-md bg-gray-50 border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+              placeholder="Confirm your password"
+            />
+            {errors.confirmPassword && (
+              <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
+            )}
+          </div>
+
+          {/* Phone Field */}
+          {/* <div>
             <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
               Phone Number
             </label>
@@ -92,10 +134,10 @@ function DonorRegistration() {
               placeholder="Enter your phone number"
             />
             {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone.message}</p>}
-          </div>
+          </div> */}
 
           {/* Address Field */}
-          <div>
+          {/* <div>
             <label htmlFor="address" className="block text-sm font-medium text-gray-700">
               Address
             </label>
@@ -107,10 +149,10 @@ function DonorRegistration() {
               rows={3}
             ></textarea>
             {errors.address && <p className="text-red-600 text-sm mt-1">{errors.address.message}</p>}
-          </div>
+          </div> */}
 
           {/* City, State, and ZIP Code Fields */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label htmlFor="city" className="block text-sm font-medium text-gray-700">
                 City
@@ -152,7 +194,7 @@ function DonorRegistration() {
               />
               {errors.zipCode && <p className="text-red-600 text-sm mt-1">{errors.zipCode.message}</p>}
             </div>
-          </div>
+          </div> */}
 
           {/* Submit Button */}
           <button
