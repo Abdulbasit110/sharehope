@@ -124,4 +124,4 @@ ngoSchema.methods.generateAccessToken = function () {
     }
   );
 };
-export const Ngo =  mongoose.model('NGO', ngoSchema);
+export const Ngo = mongoose.models.NGO || mongoose.model('NGO', ngoSchema);
