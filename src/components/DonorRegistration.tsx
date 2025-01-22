@@ -24,10 +24,11 @@ function DonorRegistration() {
     resolver: zodResolver(donorSchema),
   });
 
-  const onSubmit = (data: DonorForm) => {
+  const onSubmit = async (data: DonorForm) => {
     try {
       console.log("data ==>", data);
-      // const res = await axiosInstance.post("/auth")
+      const res = await axiosInstance.post("/auth/register", data);
+      console.log("res ==>", res);
     } catch (error) {
       
     }
