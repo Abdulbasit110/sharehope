@@ -46,7 +46,7 @@ export default function Vouchers() {
   return (
     <div className="space-y-8 mt-14">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Available Vouchers</h1>
+        <h1 className="text-2xl font-bold text-green-600">Available Vouchers</h1>
         <div className="flex items-center space-x-2">
           <Gift className="h-5 w-5 text-green-600" />
           <span className="font-medium">Your Points: {user?.points}</span>

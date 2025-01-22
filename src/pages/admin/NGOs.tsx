@@ -88,7 +88,7 @@ export default function NGOs() {
   return (
     <div className="space-y-8 mt-12">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">NGO Management</h1>
+        <h1 className="text-2xl font-bold text-green-600">NGO Management</h1>
         <button
           onClick={() => setIsCreating(true)}
           className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"

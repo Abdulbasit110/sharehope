@@ -4,7 +4,7 @@ import { Recycle, LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navbar() {
-  const {user, logout } = useAuthStore();
+  const { user,logout } = useAuthStore();
 // const user = {
 //   role :"admin"
 // }
@@ -19,7 +19,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <Recycle className="h-8 w-8 text-green-600" />
-            <span className="text-xl font-bold text-gray-900">ShareHope</span>
+            <span className="text-xl font-bold text-green-700">ShareHope</span>
           </Link>
 
           {/* Desktop Navigation */}
