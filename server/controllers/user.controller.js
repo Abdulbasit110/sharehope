@@ -24,10 +24,6 @@ const generateAccessAndRefreshToken = async (userId) => {
 };
 
 // Sign Up Route
-<<<<<<< HEAD
-=======
-
->>>>>>> 98aa065f38e7bea363c441f540fda6e5dad3f391
 export const registerUser = asyncHandler(async (req, res) => {
   // GET DATA FROM USER
 
@@ -224,28 +220,6 @@ export const verifyEmail = asyncHandler(async (req, res) => {
         }
       }
     }
-<<<<<<< HEAD
-  });
-  
-// RESEND OTP
-  
-export  const resendOTP = asyncHandler( async (req, res) => {
-    // GET USER ID AND EMAIL FROM USER
-    const {  userId, email } = req.body;
-      // console.log("Resend Email",email);
-  
-      if (!userId || !email) {
-          throw Error("Empty user details are not allowed");
-      } else {
-          await UserOTP.deleteMany({ userId });
-  
-          await sendEmail({ _id: userId , email }, res);
-          return res
-          .status(200)
-          .json(new ApiResponse(200, {}, "Verification Code Sent Successfully"));
-      }
-  });
-=======
   }
 });
 
@@ -361,4 +335,3 @@ export const resendOTP = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, {}, "Verification Code Sent Successfully"));
   }
 });
->>>>>>> 98aa065f38e7bea363c441f540fda6e5dad3f391
