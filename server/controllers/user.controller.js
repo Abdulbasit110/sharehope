@@ -24,10 +24,6 @@ const generateAccessAndRefreshToken = async (userId) => {
 };
 
 // Sign Up Route
-<<<<<<< HEAD
-
-=======
->>>>>>> c5e96d93be8cc828507d1fbf702f47fa12f5a4dc
 export const registerUser = asyncHandler(async (req, res) => {
   // GET DATA FROM USER
 

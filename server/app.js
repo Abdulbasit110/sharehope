@@ -34,22 +34,11 @@ app.use(cookieParser());
 // ROUTES IMPORT ;
 
 import userRoutes from './routes/user.routes.js';
-<<<<<<< HEAD
 import ngoRoutes from './routes/ngo.routes.js';
 
 // ROUTES DICLERATION ;
 
 app.use('/api/v1/users',userRoutes);
 app.use('/api/v1/ngo', ngoRoutes);
-=======
-import adminRoutes from './routes/admin.routes.js';
-import donationsRoutes from './routes/donations.routes.js';
-
-// ROUTES DICLERATION ;
-
-app.use('/api/v1/users', userRoutes);
-app.use('/api/v1/admin', adminRoutes);
-app.use('/api/v1/donation', donationsRoutes);
->>>>>>> c5e96d93be8cc828507d1fbf702f47fa12f5a4dc
 
 export { app };
