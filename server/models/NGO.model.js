@@ -45,23 +45,23 @@ const ngoSchema = new mongoose.Schema(
       trim: true,
       maxlength: [500, 'Description cannot exceed 500 characters'],
     },
-    // location: {
-    //   type: {
-    //     latitude: {
-    //       type: Number,
-    //       required: [true, 'Latitude is required'],
-    //       min: -90,
-    //       max: 90,
-    //     },
-    //     longitude: {
-    //       type: Number,
-    //       required: [true, 'Longitude is required'],
-    //       min: -180,
-    //       max: 180,
-    //     },
-    //   },
-    //   required: [true, 'Location is required'],
-    // },
+    location: {
+      type: {
+        latitude: {
+          type: Number,
+          required: [true, 'Latitude is required'],
+          min: -90,
+          max: 90,
+        },
+        longitude: {
+          type: Number,
+          required: [true, 'Longitude is required'],
+          min: -180,
+          max: 180,
+        },
+      },
+      required: [true, 'Location is required'],
+    },
     status: {
       type: String,
       enum: ['active', 'inactive', 'pending'],

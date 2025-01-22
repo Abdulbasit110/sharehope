@@ -25,10 +25,10 @@ const generateAccessAndRefreshToken = async (userId) => {
 // Sign Up Route
 export const registerNgo = asyncHandler(async (req, res) => {
 // GET DATA FROM NGO
-const { email, ngoname, password, address, phone, description, status, website, establishedYear } = req.body;
+const { email, ngoname, password, address, phone, description, location, status, website, establishedYear } = req.body;
     // VALIDATION - NOT EMPTY
 
-    if ([ email, ngoname, password, address, phone, description, status, website, establishedYear].some((filed) => filed?.trim() === "")) {
+    if ([ email, ngoname, password, address, phone, description, status, website, establishedYear, location ].some((filed) => filed?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
     }
 
