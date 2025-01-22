@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
 import { useAuthStore } from '../store/auth';
-
+import image from '../assets/images/clothing-donation.jpg'
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -54,7 +54,7 @@ export default function Login() {
         {/* Left Image Section */}
         <div className="hidden md:block w-1/2">
           <img
-            src='src/assets/images/clothing-donation.jpg'
+            src= {image}
             alt="cloth donation Illustration"
             className="w-full h-full object-cover"
           />
