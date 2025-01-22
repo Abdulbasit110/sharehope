@@ -86,7 +86,7 @@ export default function NGOs() {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 mt-12">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">NGO Management</h1>
         <button

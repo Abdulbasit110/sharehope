@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { Tag, Gift, Clock } from 'lucide-react';
 import type { Voucher } from '@/types';
 import { useAuthStore } from '../store/auth';
+import image from '../assets/images/clothing-donation.jpg';
 
 const voucherData = [
   {
@@ -11,7 +12,7 @@ const voucherData = [
     brandId: {
       id: "brand-1",
       name: "Green Earth Store",
-      logo: "https://via.placeholder.com/50x50?text=GreenEarth", // Placeholder logo URL
+      logo: image, // Placeholder logo URL
     },
     discount: 20, // 20% off
     pointsRequired: 100,
@@ -43,7 +44,7 @@ export default function Vouchers() {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 mt-14">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Available Vouchers</h1>
         <div className="flex items-center space-x-2">

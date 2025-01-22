@@ -4,66 +4,67 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import axios from 'axios';
-import { Building, Edit, Trash, Tag } from 'lucide-react';
-import type { Brand } from '@/types';
-import logo from "../../assets/images/clothing-ngo.jpg"
-const brandSchema = z.object({
+import { User, Edit, Trash, Mail } from 'lucide-react';
+
+const userSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  logo: z.string().url('Must be a valid URL'),
-  description: z.string().optional(),
+  email: z.string().email('Invalid email address'),
+  role: z.enum(['admin', 'user'], {
+    errorMap: () => ({ message: 'Role must be admin or user' }),
+  }),
 });
 
-type BrandForm = z.infer<typeof brandSchema>;
+type UserForm = z.infer<typeof userSchema>;
 
-const dummyBrands = [
-  {
-    id: '1',
-    name: 'EcoWear',
-    logo: logo,
-    description: 'Sustainable clothing for a greener future.',
-  }]
+const dummyUsers = [
+  { id: '1', name: 'John Doe', email: 'john@example.com', role: 'admin' },
+  { id: '2', name: 'Jane Smith', email: 'jane@example.com', role: 'user' },
+  { id: '3', name: 'Emily Davis', email: 'emily@example.com', role: 'user' },
+];
 
-export default function Brands() {
+export default function Users() {
   const [isCreating, setIsCreating] = useState(false);
-  const [editingBrand, setEditingBrand] = useState<Brand | null>(null);
+  const [editingUser, setEditingUser] = useState<UserForm | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: brands } = useQuery({
-    queryKey: ['brands'],
+  const { data: users } = useQuery({
+    queryKey: ['users'],
     queryFn: async () => {
-      const { data } = await axios.get<Brand[]>('/api/brands');
-      return data;
+      // Replace with your API endpoint
+      return new Promise((resolve) => {
+        setTimeout(() => resolve(dummyUsers), 500); // Simulate delay with dummy data
+      });
     },
   });
 
-  const createBrand = useMutation({
-    mutationFn: async (data: BrandForm) => {
-      const { data: response } = await axios.post('/api/brands', data);
+  const createUser = useMutation({
+    mutationFn: async (data: UserForm) => {
+      const { data: response } = await axios.post('/api/users', data); // Replace with actual API
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['brands'] });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
       setIsCreating(false);
     },
   });
 
-  const updateBrand = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: BrandForm }) => {
-      const { data: response } = await axios.patch(`/api/brands/${id}`, data);
+  const updateUser = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: UserForm }) => {
+      const { data: response } = await axios.patch(`/api/users/${id}`, data); // Replace with actual API
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['brands'] });
-      setEditingBrand(null);
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      setEditingUser(null);
     },
   });
 
-  const deleteBrand = useMutation({
+  const deleteUser = useMutation({
     mutationFn: async (id: string) => {
-      await axios.delete(`/api/brands/${id}`);
+      await axios.delete(`/api/users/${id}`); // Replace with actual API
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['brands'] });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
 
@@ -71,53 +72,49 @@ export default function Brands() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<BrandForm>({
-    resolver: zodResolver(brandSchema),
-    defaultValues: editingBrand || undefined,
+  } = useForm<UserForm>({
+    resolver: zodResolver(userSchema),
+    defaultValues: editingUser || undefined,
   });
 
   return (
     <div className="space-y-8 mt-12">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Brand Management</h1>
+        <h1 className="text-2xl font-bold">Users Management</h1>
         <button
           onClick={() => setIsCreating(true)}
           className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
         >
-          Add Brand
+          Add User
         </button>
       </div>
 
-      {/* Brand List */}
+      {/* Users List */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {dummyBrands?.map((brand) => (
+        {users?.map((user) => (
           <div
-            key={brand.id}
+            key={user.id}
             className="bg-white p-6 rounded-lg shadow-md space-y-4"
           >
             <div className="flex justify-between items-start">
-              <div className="flex items-center space-x-4">
-                <img
-                  src={brand.logo}
-                  alt={brand.name}
-                  className="w-12 h-12 object-contain rounded-md"
-                />
-                <div>
-                  <h3 className="text-lg font-semibold">{brand.name}</h3>
-                  <p className="text-gray-500">{brand.description}</p>
-                </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-semibold flex items-center space-x-2">
+                  <User className="w-5 h-5 text-green-600" />
+                  <span>{user.name}</span>
+                </h3>
+                <p className="text-gray-500">{user.email}</p>
               </div>
               <div className="flex space-x-2">
                 <button
-                  onClick={() => setEditingBrand(brand)}
+                  onClick={() => setEditingUser(user)}
                   className="text-gray-600 hover:text-gray-900"
                 >
                   <Edit className="h-5 w-5" />
                 </button>
                 <button
                   onClick={() => {
-                    if (confirm('Are you sure you want to delete this brand?')) {
-                      deleteBrand.mutate(brand.id);
+                    if (confirm('Are you sure you want to delete this user?')) {
+                      deleteUser.mutate(user.id);
                     }
                   }}
                   className="text-red-600 hover:text-red-900"
@@ -126,22 +123,26 @@ export default function Brands() {
                 </button>
               </div>
             </div>
+            <div className="flex items-center space-x-2 text-gray-600">
+              <Mail className="h-5 w-5" />
+              <span>{user.role}</span>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Create/Edit Brand Modal */}
-      {(isCreating || editingBrand) && (
+      {/* Create/Edit User Modal */}
+      {(isCreating || editingUser) && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h2 className="text-xl font-bold mb-4">
-              {editingBrand ? 'Edit Brand' : 'Add Brand'}
+              {editingUser ? 'Edit User' : 'Add User'}
             </h2>
             <form
               onSubmit={handleSubmit((data) =>
-                editingBrand
-                  ? updateBrand.mutate({ id: editingBrand.id, data })
-                  : createBrand.mutate(data)
+                editingUser
+                  ? updateUser.mutate({ id: editingUser.id, data })
+                  : createUser.mutate(data)
               )}
               className="space-y-4"
             >
@@ -161,27 +162,33 @@ export default function Brands() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Logo URL
+                  Email
                 </label>
                 <input
-                  type="url"
-                  {...register('logo')}
+                  type="email"
+                  {...register('email')}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                 />
-                {errors.logo && (
-                  <p className="mt-1 text-sm text-red-600">{errors.logo.message}</p>
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
                 )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Description
+                  Role
                 </label>
-                <textarea
-                  {...register('description')}
-                  rows={3}
+                <select
+                  {...register('role')}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                />
+                >
+                  <option value="">Select Role</option>
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
+                </select>
+                {errors.role && (
+                  <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
+                )}
               </div>
 
               <div className="flex justify-end space-x-4">
@@ -189,7 +196,7 @@ export default function Brands() {
                   type="button"
                   onClick={() => {
                     setIsCreating(false);
-                    setEditingBrand(null);
+                    setEditingUser(null);
                   }}
                   className="px-4 py-2 text-gray-700 hover:text-gray-900"
                 >
@@ -197,14 +204,14 @@ export default function Brands() {
                 </button>
                 <button
                   type="submit"
-                  disabled={createBrand.isPending || updateBrand.isPending}
+                  disabled={createUser.isPending || updateUser.isPending}
                   className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50"
                 >
-                  {createBrand.isPending || updateBrand.isPending
+                  {createUser.isPending || updateUser.isPending
                     ? 'Saving...'
-                    : editingBrand
-                    ? 'Update Brand'
-                    : 'Add Brand'}
+                    : editingUser
+                    ? 'Update User'
+                    : 'Add User'}
                 </button>
               </div>
             </form>

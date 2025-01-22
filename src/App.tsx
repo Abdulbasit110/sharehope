@@ -16,7 +16,7 @@ import Registration from './pages/Register';
 import NgoRegistration from './components/NgoRegistration';
 import DonorRegistration from './components/DonorRegistration';
 import About from './components/About';
-// import AdminUsers from './pages/admin/Users';
+import AdminUsers from './pages/admin/Users';
 
 const queryClient = new QueryClient();
 
@@ -32,7 +32,6 @@ function App() {
             <Route path="register/ngo" element={<NgoRegistration/>} />
             <Route path="register/donor" element={<DonorRegistration/>} />
             <Route path="About" element={<About/>} />
-            {/* <Route path="register" element={<Register />} /> */}
             
             {/* Protected User Routes */}
             {/* <Route element={<ProtectedRoute allowedRoles={['user']} />}> */}
@@ -48,7 +47,7 @@ function App() {
                 {/* <Route index element={<AdminDashboard />} /> */}
                 <Route path="ngos" element={<AdminNGOs />} />
                 <Route path="brands" element={<AdminBrands />} />
-                {/* <Route path="users" element={<AdminUsers />} /> */}
+                <Route path="users" element={<AdminUsers />} />
               </Route>
             {/* </Route> */}
           </Route>
