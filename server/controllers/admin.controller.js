@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 import { Donation } from "../models/donation.model.js";
-import { Ngo } from "../models/ngo.model.js";
-=======
 import { Ngo } from "../models/NGO.model.js";
->>>>>>> 75edaa6b86e947a996b1e0be398f0b8851011ed4
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
