@@ -1,7 +1,7 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { axiosInstance } from '../lib/axios';
 
 const donorSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -25,13 +25,17 @@ function DonorRegistration() {
   });
 
   const onSubmit = (data: DonorForm) => {
-    console.log('Donor Data:', data);
-    // Handle form submission (e.g., API call)
+    try {
+      console.log("data ==>", data);
+      // const res = await axiosInstance.post("/auth")
+    } catch (error) {
+      
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-lg w-full">
+      <div className="bg-white shadow-lg rounded-lg p-8 max-w-lg w-full mt-16">
         {/* Heading */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-green-600">

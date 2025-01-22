@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -128,9 +128,9 @@ export default function Login() {
           {/* Footer Section */}
           <p className="mt-6 text-sm text-center text-gray-600">
             Don't have an account?{' '}
-            <a href="/signup" className="text-green-700 font-bold hover:underline">
+            <Link to="/registration" className="text-green-700 font-bold hover:underline">
               Create an Account
-            </a>
+            </Link>
           </p>
         </div>
       </div>
