@@ -25,13 +25,11 @@ const generateAccessAndRefreshToken = async (userId) => {
   }
 };
 
-  // Sign Up Route
-
+// Sign Up Route
 export const registerUser = asyncHandler(async (req, res) => {
-  // GET DATA FROM USER
 
-  const { email, username, password } = req.body;
-
+// GET DATA FROM USER
+const { email, username, password } = req.body;
   // VALIDATION - NOT EMPTY
 
   if ([email, username, password].some((filed) => filed?.trim() === "")) {
@@ -215,7 +213,7 @@ export  const verifyEmail = asyncHandler(async (req, res) => {
     }
   });
   
-    // RESEND OTP
+// RESEND OTP
   
 export  const resendOTP = asyncHandler( async (req, res) => {
     // GET USER ID AND EMAIL FROM USER

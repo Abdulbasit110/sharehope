@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken'
 
 const ngoSchema = new mongoose.Schema(
   {
-    username: {
+    ngoname: {
       type: String,
       required: [true, 'NGO name is required'],
       trim: true,
@@ -43,27 +45,31 @@ const ngoSchema = new mongoose.Schema(
       trim: true,
       maxlength: [500, 'Description cannot exceed 500 characters'],
     },
-    location: {
-      type: {
-        latitude: {
-          type: Number,
-          required: [true, 'Latitude is required'],
-          min: -90,
-          max: 90,
-        },
-        longitude: {
-          type: Number,
-          required: [true, 'Longitude is required'],
-          min: -180,
-          max: 180,
-        },
-      },
-      required: [true, 'Location is required'],
-    },
+    // location: {
+    //   type: {
+    //     latitude: {
+    //       type: Number,
+    //       required: [true, 'Latitude is required'],
+    //       min: -90,
+    //       max: 90,
+    //     },
+    //     longitude: {
+    //       type: Number,
+    //       required: [true, 'Longitude is required'],
+    //       min: -180,
+    //       max: 180,
+    //     },
+    //   },
+    //   required: [true, 'Location is required'],
+    // },
     status: {
       type: String,
       enum: ['active', 'inactive', 'pending'],
       default: 'pending',
+    },
+    isVerified:{
+      type: Boolean,
+      default: false,
     },
     website: {
       type: String,
@@ -82,4 +88,34 @@ const ngoSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model('NGO', ngoSchema);
+
+
+// HASHING PASSWORD
+ngoSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+
+// COMPARE PASSOWRD
+ngoSchema.methods.isPasswordCorrect = async function(candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+
+// GENERATE ACCESS TOKEN
+ngoSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+      ngoname: this.ngoname,
+    },
+    process.env.ACCEES_TOKEN_SECRET,
+    {
+      expiresIn: process.env.ACCEES_TOKEN_EXPIRY,
+    }
+  );
+};
+export const Ngo =  mongoose.model('NGO', ngoSchema);

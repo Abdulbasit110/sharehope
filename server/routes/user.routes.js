@@ -10,4 +10,5 @@ router.route('/login').post(loginUser)
 router.route('/verify-email').post(verifyEmail)
 // RESEND
 router.route('/resend-otp').post(resendOTP)
+
 export default router;

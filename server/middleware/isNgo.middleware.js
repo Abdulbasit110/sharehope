@@ -1,5 +1,4 @@
 import { Ngo } from "../models/ngo.model.js";
-import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
@@ -18,17 +17,15 @@ export const verifyJWT = asyncHandler(async (req , _ , next) => {
 
   //  FIND USER
 
-  const user = await User.findById(decodeToken?._id).select(
+  const ngo = await Ngo.findById(decodeToken?._id).select(
     "-password"
   );
 
-  if (!user) {
+  if (!ngo) {
     throw new ApiError(401, "Invalid Acess Token");
   }
 
   //  RETURN USER IN REQ
-  req.user = user;
-
+  req.ngo = ngo;
   next() ;
-
 });
