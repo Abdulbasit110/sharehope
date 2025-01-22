@@ -1,15 +1,10 @@
 import { Link } from 'react-router-dom';
-// import { useAuthStore } from '@/store/auth';
+import { useAuthStore } from '../store/auth';
 import { Recycle, LogOut } from 'lucide-react';
 
 export default function Navbar() {
-  // const { user, logout } = useAuthStore();
-  const user = {
-    role  : "user"
-  }
-  const logout = ()=> {
-    console.log("{first}")
-  }
+  const { user, logout } = useAuthStore();
+  
 
   return (
     <nav className="bg-white shadow">
