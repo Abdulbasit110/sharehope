@@ -1,5 +1,5 @@
-import { Ngo } from "../models/ngo.model.js";
 import UserOTP from "../models/userOTP.model.js";
+import { Ngo } from "../models/NGO.model.js";
 import { sendEmail } from "../services/sendEmail.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
