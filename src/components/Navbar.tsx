@@ -6,7 +6,7 @@ import { useState } from 'react';
 export default function Navbar() {
   const { logout } = useAuthStore();
 const user = {
-  role :"admin"
+  role :"user"
 }
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
