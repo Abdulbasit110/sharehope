@@ -155,6 +155,37 @@ export const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
+  // LOGOUT
+
+
+export const logoutUser = asyncHandler(async (req, res) => {
+  // FIND AND UPDATE
+
+  await User.findByIdAndUpdate(
+    req?.user?._id,
+    {
+      $set: {
+        refreshToken: undefined,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  const options = {
+    http: true,
+    secure: true,
+  };
+
+  //   RETURN RESPONSE
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .json(new ApiResponse(200, {}, "User Logged Out"));
+});
+
   // VERIFY EMAIL
 
 export  const verifyEmail = asyncHandler(async (req, res) => {
@@ -214,6 +245,95 @@ export  const verifyEmail = asyncHandler(async (req, res) => {
       }
     }
   });
+
+export // GET CURRENT USER
+
+const getCurrentUser = asyncHandler(async (req, res) => {
+  // RETURN RESPONSE
+
+  return res.status(200).json(200, req.user, "User Fetched Successfully");
+});
+
+
+// UPDATE AVATAR
+
+export const updateUserAvatar = asyncHandler(async (req, res) => {
+  //  GET NEW AVATAR FROM USER
+
+  const avatarLoacalPath = req.file?.path;
+
+  // CEHCK FOR THE LOCAL AVATAR
+
+  if (!avatarLoacalPath) {
+    throw new ApiError(400, "Avatar file is misssing");
+  }
+
+  // UPLOAD ON CLOUDINARY
+
+  const avatar = await uploadCloudinary(avatarLoacalPath);
+
+  // CHECK FOR AVATAR
+
+  if (!avatar) {
+    throw new ApiError(400, "Error while uploading on avatar");
+  }
+
+  // FIND AND UPDATE CURRENT USER AVATAR
+
+  const user = await User.findOneAndUpdate(
+    req.user?._id,
+    {
+      $set: { avatar: avatar.url },
+    },
+    { new: true }
+  ).select("-password");
+
+  // RETURN RESPONSE
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Avatar Image Updated Succesfully"));
+});
+
+// CHANGE PASSWORD
+
+export const changePassword = asyncHandler(async (req, res) => {
+  // GET NEW AND OLD PASSWORD
+
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    throw new ApiError(400, "All Required");
+  }
+
+  // GET CURRENT USER
+
+  const user = await User.findById(req.user?._id);
+
+  if (!user) {
+    throw new ApiError("No User Found");
+  }
+
+  // CHECK OLD PSWRD
+
+  const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+
+  if (!isPasswordCorrect) {
+    throw new ApiError(400, "Invalid old Password");
+  }
+
+  // REPLACE OLD TO NEW PSWRD
+
+  user.password = newPassword;
+
+  await user.save({ validateBeforeSave: false });
+
+  // RETURN RESPONSE
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password Successfully Changed"));
+});
   
     // RESEND OTP
   
