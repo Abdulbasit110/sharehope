@@ -1,6 +1,6 @@
 import { Donation } from '../models/donation.model.js';  
 import { User } from '../models/user.model.js';          
-import { Ngo } from "../models/ngo.model.js";         
+import { Ngo } from "../models/NGO.model.js";         
 import {ApiError} from '../utils/ApiError.js';             
 import {ApiResponse} from '../utils/ApiResponse.js';       
 
