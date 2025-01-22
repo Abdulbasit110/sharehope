@@ -20,6 +20,27 @@ const disposalSchema = z.object({
 
 type DisposalForm = z.infer<typeof disposalSchema>;
 
+const disposalData = [
+  {
+    id: "disposal-1", // Unique identifier for disposal
+    items: [
+      {
+        type: "Plastic Bottles",
+        quantity: 20,
+        reason: "Broken and no longer usable"
+      },
+      {
+        type: "Old Electronics",
+        quantity: 5,
+        reason: "Damaged and cannot be repaired"
+      }
+    ],
+    pickupDate: "2025-01-25",
+    pickupAddress: "123 Recycling Avenue, EcoCity, Planet Earth",
+    createdAt: "2025-01-20T10:30:00Z",
+    status: "pending" // Example statuses: 'pending', 'picked_up', 'completed'
+  }]
+
 export default function Disposals() {
   const [isCreating, setIsCreating] = useState(false);
   const queryClient = useQueryClient();
@@ -65,7 +86,7 @@ export default function Disposals() {
 
       {/* Disposal List */}
       <div className="grid gap-6">
-        {disposals?.map((disposal) => (
+        {disposalData?.map((disposal) => (
           <div
             key={disposal.id}
             className="bg-white p-6 rounded-lg shadow-md space-y-4"

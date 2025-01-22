@@ -22,6 +22,47 @@ const donationSchema = z.object({
 
 type DonationForm = z.infer<typeof donationSchema>;
 
+const donationData = [{
+  ngoId: "12345", // Sample NGO ID
+  items: [
+    {
+      type: "Clothes",
+      quantity: 5,
+      condition: "good",
+      description: "Gently used shirts and pants."
+    },
+    {
+      type: "Shoes",
+      quantity: 2,
+      condition: "new",
+      description: "Brand-new shoes in original packaging."
+    },
+    {
+      type: "Books",
+      quantity: 10,
+      condition: "fair",
+      description: "Used textbooks with some wear."
+    }
+  ],
+  pickupDate: "2022-03-25",
+  pickupAddress: "123 Green Street, EcoCity, Planet Earth",
+  createdAt : "Wed Jan 22 2025 13:55:39 GMT+0500 (Pakistan Standard Time)",
+  status : "test"
+}];
+
+const ngoData = [
+  {
+    id: "ngo-1",
+    name: "Green Earth Foundation",
+    email: "contact@greenearth.org",
+    phone: "+1234567890",
+    address: "123 Green Street, EcoCity, Planet Earth",
+    description: "An NGO dedicated to promoting environmental sustainability and reducing textile waste.",
+    latitude: 40.7128,
+    longitude: -74.0060,
+    createdAt: "2025-01-15T10:30:00Z",
+  }]
+
 export default function Donations() {
   const [isCreating, setIsCreating] = useState(false);
   const queryClient = useQueryClient();
@@ -75,9 +116,9 @@ export default function Donations() {
 
       {/* Donation List */}
       <div className="grid gap-6">
-        {donations?.map((donation) => (
+        {donationData?.map((donation , index) => (
           <div
-            key={donation.id}
+            key={index}
             className="bg-white p-6 rounded-lg shadow-md space-y-4"
           >
             <div className="flex justify-between items-start">
@@ -145,7 +186,7 @@ export default function Donations() {
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                 >
                   <option value="">Select an NGO</option>
-                  {ngos?.map((ngo) => (
+                  {ngoData?.map((ngo) => (
                     <option key={ngo.id} value={ngo.id}>
                       {ngo.name}
                     </option>

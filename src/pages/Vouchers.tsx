@@ -3,7 +3,21 @@ import axios from 'axios';
 import { format } from 'date-fns';
 import { Tag, Gift, Clock } from 'lucide-react';
 import type { Voucher } from '@/types';
-// import { useAuthStore } from '@/store/auth';
+import { useAuthStore } from '../store/auth';
+
+const voucherData = [
+  {
+    id: "voucher-1",
+    brandId: {
+      id: "brand-1",
+      name: "Green Earth Store",
+      logo: "https://via.placeholder.com/50x50?text=GreenEarth", // Placeholder logo URL
+    },
+    discount: 20, // 20% off
+    pointsRequired: 100,
+    expiryDate: "2025-02-15T23:59:59Z", // Expiry date in ISO format
+    createdAt: "2025-01-15T10:30:00Z", // Creation date in ISO format
+  }]
 
 export default function Vouchers() {
   const { user } = useAuthStore();
@@ -39,7 +53,7 @@ export default function Vouchers() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {vouchers?.map((voucher) => (
+        {voucherData?.map((voucher) => (
           <div
             key={voucher.id}
             className="bg-white p-6 rounded-lg shadow-md space-y-4"

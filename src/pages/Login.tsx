@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-// import { useAuthStore } from '@/store/auth';
 import { Loader2 } from 'lucide-react';
-
+import {useAuthStore} from '../store/auth'
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),

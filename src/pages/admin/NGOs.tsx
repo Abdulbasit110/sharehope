@@ -19,6 +19,19 @@ const ngoSchema = z.object({
 
 type NGOForm = z.infer<typeof ngoSchema>;
 
+const ngoData = [
+  {
+    id: "ngo-1",
+    name: "Green Earth Foundation",
+    email: "contact@greenearth.org",
+    phone: "+1234567890",
+    address: "123 Green Street, EcoCity, Planet Earth",
+    description: "An NGO dedicated to promoting environmental sustainability and reducing textile waste.",
+    latitude: 40.7128,
+    longitude: -74.0060,
+    createdAt: "2025-01-15T10:30:00Z",
+  }]
+
 export default function NGOs() {
   const [isCreating, setIsCreating] = useState(false);
   const [editingNGO, setEditingNGO] = useState<NGO | null>(null);
@@ -86,7 +99,7 @@ export default function NGOs() {
 
       {/* NGO List */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {ngos?.map((ngo) => (
+        {ngoData?.map((ngo) => (
           <div
             key={ngo.id}
             className="bg-white p-6 rounded-lg shadow-md space-y-4"
