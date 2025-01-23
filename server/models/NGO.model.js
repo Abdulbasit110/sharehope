@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 
 const ngoSchema = new mongoose.Schema(
   {
-    ngoname: {
+    name: {
       type: String,
       required: [true, 'NGO name is required'],
       trim: true,
@@ -86,13 +86,14 @@ const ngoSchema = new mongoose.Schema(
     },
     avatar:{
       type: String,
-    }
+    }, role: {
+    type: String,
+    enum: ['user', 'admin', 'ngo'],
+    default: 'user',
+  },
   },
   { timestamps: true }
 );
-
-
-
 
 
 

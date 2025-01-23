@@ -25,44 +25,27 @@ const generateAccessAndRefreshToken = async (userId) => {
 // Sign Up Route
 export const registerNgo = asyncHandler(async (req, res) => {
 // GET DATA FROM NGO
-const { email, ngoname, password, address, phone, description, location, status, website, establishedYear } = req.body;
+  const { name ,email, password, address, phone, description, location, status, website, establishedYear } = req.body;
     // VALIDATION - NOT EMPTY
-
-    if ([ email, ngoname, password, address, phone, description, status, website, establishedYear, location ].some((filed) => filed?.trim() === "")) {
-    throw new ApiError(400, "All fields are required");
-    }
-
+    console.log("test",req.body)
     // CHECK FOR (username and email) DUPLICATION
     const existedUser = await Ngo.findOne({
-    $or: [{ ngoname }, { email }, { phone }],
+    $or: [{ name }, { email }, { phone }],
     });
 
     if (existedUser) {
     throw new ApiError(409, "Ngo with email or username already exists");
     }
-
-    // CHECK FOR AVATAR
-    // const avatarLocalPath = req.file?.path;
-
-    // // MULTER CHECK
-    // if (!avatarLocalPath) {
-    // throw new ApiError(400, "Avatar file is required");
-    // }
-
-    // UPLOAD CLOUDINARY
-    // const avatar = await uploadCloudinary(avatarLocalPath);
-    // if (!avatar) {
-    // throw new ApiError(400, "Avatar file is required on CLoudinary");
-    // }
+    console.log("existing" , existedUser)
 
     // CREATE OBJECT
     const user = await Ngo.create({
-    // avatar: avatar.url,
-    ngoname,
+    name,
     email,
     password,
     address,
     phone,
+    location,
     status,
     description,
     website,
@@ -70,7 +53,7 @@ const { email, ngoname, password, address, phone, description, location, status,
     });
     // REMOVE PASSWORD RESPONSE
     const createdNgo = await Ngo.findById(user._id).select("-password");
-
+    console.log("created",createdNgo)
     // CHECK FOR USER CREATION
     if (!createdNgo) {
     throw new ApiError(500, "Someting went wrong while registration the user");
@@ -91,43 +74,44 @@ const { email, ngoname, password, address, phone, description, location, status,
 //Sign In Route
 export const loginNgo = asyncHandler(async (req, res) => {
   // GET DATA FROM USER
-  const { ngoname, email, password } = req.body;
+  const { email, password } = req.body;
+  console.log(req.body);
 
-  // VALIDATION - NOT EMYPTY
-
-  if ([ngoname, email].some((field) => field?.trim() === "")) {
-    throw new ApiError(400, "Ngo with email or name is required");
+  // VALIDATION - NOT EMPTY
+  console.log(email, password);
+  if (!email || email.trim() === "") {
+    throw new ApiError(400, "Email is required");
   }
 
-  // FIND
-  const user = await Ngo.findOne({
-    $or: [{ email }, { ngoname }],
-  });
+  if (!password || password.trim() === "") {
+    throw new ApiError(400, "Password is required");
+  }
+
+  // FIND NGO BY EMAIL
+  const user = await Ngo.findOne({ email });
+  console.log("user", user);
+
   if (!user) {
-    throw new ApiError(404, "Ngo does not exists");
+    throw new ApiError(404, "NGO does not exist");
   }
-  
+
   // CHECK PASSWORD
   const isPasswordValid = await user.isPasswordCorrect(password);
   if (!isPasswordValid) {
-    throw new ApiError(404, "Ngo does not exists");
+    throw new ApiError(401, "Invalid credentials");
   }
 
-  // ACCESS AND REFRESH TOKEN
-  const { accessToken} = await generateAccessAndRefreshToken(
-    user._id
-  );
-  const loggedInUser = await Ngo.findById(user._id).select(
-    "-password"
-  );
+  // GENERATE ACCESS AND REFRESH TOKEN
+  const { accessToken } = await generateAccessAndRefreshToken(user._id);
+  const loggedInUser = await Ngo.findById(user._id).select("-password");
 
-  
-
-  // GENERATES COOKIES
+  // GENERATE COOKIES
   const options = {
-    http: true,
+    httpOnly: true,
     secure: true,
+    sameSite: "None",
   };
+
   res
     .status(200)
     .cookie("accessToken", accessToken, options)
@@ -138,10 +122,11 @@ export const loginNgo = asyncHandler(async (req, res) => {
           user: loggedInUser,
           accessToken,
         },
-        "Ngo LoggedIn Successfully"
+        "NGO logged in successfully"
       )
     );
 });
+
 
 // VERIFY EMAIL
 export const verifyEmailNgo = asyncHandler(async (req, res) => {
@@ -244,6 +229,54 @@ export const getCurrentNgo = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, ngo, "Ngo Fetched Successfully"));
+});
+
+export const getAllNgos = asyncHandler(async (req, res) => {
+  console.log("first")
+  // Extract and validate query parameters
+  const { page = 1, limit = 10, search = "" } = req.query;
+
+  const pageNumber = parseInt(page, 10);
+  const pageSize = parseInt(limit, 10);
+
+  if (isNaN(pageNumber) || pageNumber <= 0) {
+    throw new ApiError(400, "Invalid page number");
+  }
+
+  if (isNaN(pageSize) || pageSize <= 0) {
+    throw new ApiError(400, "Invalid limit");
+  }
+
+  // Build the search query
+  const searchQuery = search
+    ? {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
+      }
+    : {};
+
+  // Fetch the total count and NGOs
+  const totalNgos = await Ngo.countDocuments(searchQuery);
+  const ngos = await Ngo.find(searchQuery)
+    .sort({ createdAt: -1 }) // Sort by newest first
+    .skip((pageNumber - 1) * pageSize)
+    .limit(pageSize);
+
+  if (!ngos || ngos.length === 0) {
+    throw new ApiError(404, "No NGOs found");
+  }
+
+  // Prepare the response
+  const response = {
+    ngos,
+    totalNgos,
+    currentPage: pageNumber,
+    totalPages: Math.ceil(totalNgos / pageSize),
+  };
+
+  res.status(200).json(new ApiResponse(200, response, "NGOs fetched successfully"));
 });
 
 

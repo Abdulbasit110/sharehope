@@ -175,3 +175,27 @@ export const deleteDonation = async (req, res, next) => {
     next(error);  // Pass the error to global error handler
   }
 };
+
+// Get all donations
+export const getAllDonations = async (req, res, next) => {
+  console.log("first")
+  try {
+    const donations = await Donation.find()
+      .populate('ngo donor')
+      .sort({ createdAt: -1 }); // Sort by newest first
+
+    if (!donations || donations.length === 0) {
+      throw new ApiError(404, "No donations found");
+    }
+
+    res.status(200).json(
+      new ApiResponse(
+        200,
+        donations,
+        "All donations retrieved successfully"
+      )
+    );
+  } catch (error) {
+    next(error); // Pass the error to the global error handler
+  }
+};

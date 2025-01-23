@@ -45,23 +45,6 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User with email or username already exists");
   }
 
-  // CHECK FOR AVATAR
-
-  // const avatarLocalPath = req.file?.path;
-
-  // MULTER CHECK
-  // console.log(req.file)
-
-  // if (!avatarLocalPath) {
-  //   throw new ApiError(400, "Avatar file is required");
-  // }
-  // UPLOAD CLOUDINARY
-
-  // const avatar = await uploadCloudinary(avatarLocalPath);
-
-  // if (!avatar) {
-  //   throw new ApiError(400, "Avatar file is required on CLoudinary");
-  // }
 
   // CREATE OBJECT
   const user = await User.create({
@@ -125,7 +108,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   const { accessToken } = await generateAccessAndRefreshToken(user._id);
 
   const loggedInUser = await User.findById(user._id).select("-password");
-
+  console.log(loggedInUser)
   // GENERATES COOKIES
 
   const options = {

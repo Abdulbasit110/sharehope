@@ -1,5 +1,5 @@
 import express from 'express';
-import { loginNgo, logoutNgo, registerNgo, resendOTPNgo, verifyEmailNgo, getCurrentNgo, updateNgoAvatar, changeNgoPassword } from '../controllers/ngo.controller.js';
+import { loginNgo, logoutNgo, registerNgo, resendOTPNgo, verifyEmailNgo, getCurrentNgo,getAllNgos, updateNgoAvatar, changeNgoPassword } from '../controllers/ngo.controller.js';
 import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWT } from '../middleware/isNgo.middleware.js';
 
@@ -25,6 +25,7 @@ router.route("/updateNgo-avatar").patch(verifyJWT, upload.single("avatar"), upda
 
 //GET NGO
 router.route("/get").get( verifyJWT, getCurrentNgo);
+router.route("/getall").get(getAllNgos);
 
 //CHANGE-PASSWORD
 router.route("/changeNgo-password").post(verifyJWT, changeNgoPassword);
