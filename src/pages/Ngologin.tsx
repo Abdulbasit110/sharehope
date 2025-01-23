@@ -33,7 +33,9 @@ export default function Login() {
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post('/users/login', data);
+        console.log(data)
+      const response = await axiosInstance.post('/ngo/login', data);
+      console.log(data)
       const {user , accessToken} = response.data.message;
       setAuth(user, accessToken);
       toast.success('Login successful! Redirecting...');

@@ -4,5 +4,9 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ]
+  ],"functions": {
+    "*": {
+      "maxDuration": 60
+    }
+  }
 }

@@ -1,15 +1,19 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/auth';
 import { Recycle, LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navbar() {
   const { user,logout } = useAuthStore();
+  const navigate = useNavigate();
 
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
-
+  const handlelogout = () => {
+    logout()
+    navigate("/")
+  }
   return (
     <nav className="bg-white shadow-lg fixed top-0 left-0 w-full z-50">
       <div className="container mx-auto px-4">
@@ -62,7 +66,7 @@ export default function Navbar() {
 
                 {/* Logout */}
                 <button
-                  onClick={logout}
+                  onClick={handlelogout}
                   className="flex items-center space-x-1 text-gray-700 hover:text-gray-900"
                 >
                   <LogOut className="h-5 w-5" />

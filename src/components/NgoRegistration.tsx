@@ -1,12 +1,14 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../lib/axios';
 
 const ngoSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters long').max(100, 'Name cannot exceed 100 characters'),
   email: z.string().email('Invalid email address'),
   address: z.string().min(10, 'Address must be at least 10 characters long'),
+  password: z.string().min(6, 'password must be at least 6 characters long'),
   phone: z.string().regex(/^\d{10,15}$/, 'Phone number should contain 10 to 15 digits'),
   description: z.string().max(500, 'Description cannot exceed 500 characters').optional(),
   location: z.object({
@@ -20,6 +22,8 @@ const ngoSchema = z.object({
 type NgoForm = z.infer<typeof ngoSchema>;
 
 function NgoRegistration() {
+
+    const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -33,6 +37,7 @@ function NgoRegistration() {
       console.log('NGO Registration Data:', data);
       const res = await axiosInstance.post("/ngo/register", data);
       console.log('NGO Registration Response:', res.data);
+      navigate("/ngologin")
       // Handle form submission (e.g., send to API)
     } catch (error) {
       console.error('NGO Registration Error:', error);
@@ -82,6 +87,19 @@ function NgoRegistration() {
               placeholder="Enter email"
             />
             {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>}
+          </div>
+          {/* Password */}
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              {...register('password')}
+              className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:border-green-500 focus:ring-green-500"
+            />
+            {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password.message}</p>}
           </div>
           {/* Description */}
           <div>

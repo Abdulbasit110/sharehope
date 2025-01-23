@@ -7,6 +7,7 @@ import axios from 'axios';
 import { format } from 'date-fns';
 import { Package, Calendar, MapPin, AlertCircle } from 'lucide-react';
 import type { Donation, NGO } from '@/types';
+import { axiosInstance } from '../lib/axios';
 
 const donationSchema = z.object({
   ngoId: z.string().min(1, 'Please select an NGO'),
@@ -50,17 +51,20 @@ const donationData = [{
   status : "test"
 }];
 
-const ngoData = [
+const ngosData = [
   {
-    id: "ngo-1",
-    name: "Green Earth Foundation",
-    email: "contact@greenearth.org",
-    phone: "+1234567890",
-    address: "123 Green Street, EcoCity, Planet Earth",
-    description: "An NGO dedicated to promoting environmental sustainability and reducing textile waste.",
-    latitude: 40.7128,
-    longitude: -74.0060,
-    createdAt: "2025-01-15T10:30:00Z",
+    "ngoId" :123,
+    "name": "Green Earth Foundation",
+    "email": "info@greenearth.org",
+    "password": "password123",
+    "address": "123 Green Street, EcoCity, Planet Earth",
+    "phone": "1234567890",
+    "description": "An NGO dedicated to promoting environmental sustainability.",
+    "location": { "latitude": 40.7128, "longitude": -74.006 },
+    "status": "active",
+    "website": "https://greenearth.org",
+    "establishedYear": 2005,
+    "createdAt": "2023-01-01T10:00:00.000Z"
   }]
 
 export default function Donations() {
@@ -70,7 +74,8 @@ export default function Donations() {
   const { data: donations } = useQuery({
     queryKey: ['donations'],
     queryFn: async () => {
-      const { data } = await axios.get<Donation[]>('/api/donations/my-donations');
+      const { data } = await axiosInstance.get('/ngo/getall', data);
+      console.log(data)
       return data;
     },
   });
@@ -78,14 +83,16 @@ export default function Donations() {
   const { data: ngos } = useQuery({
     queryKey: ['ngos'],
     queryFn: async () => {
-      const { data } = await axios.get<NGO[]>('/api/ngos');
+      const { data } = await axiosInstance.get('/ngo/getall', data);
+      console.log(data)
       return data;
     },
   });
 
   const createDonation = useMutation({
     mutationFn: async (data: DonationForm) => {
-      const { data: response } = await axios.post('/api/donations', data);
+      console.log(data)
+      const { data: response } = await axiosInstance.post('/donations/create-donation', data);
       return response;
     },
     onSuccess: () => {
@@ -186,8 +193,8 @@ export default function Donations() {
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                 >
                   <option value="">Select an NGO</option>
-                  {ngoData?.map((ngo) => (
-                    <option key={ngo.id} value={ngo.id}>
+                  {ngosData?.map((ngo , index) => (
+                    <option key={ngo.id} value={index}>
                       {ngo.name}
                     </option>
                   ))}
@@ -222,3 +229,4 @@ export default function Donations() {
     </div>
   );
 }
+
