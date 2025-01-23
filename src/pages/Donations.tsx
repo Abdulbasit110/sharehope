@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import { Package, Calendar, MapPin, AlertCircle } from 'lucide-react';
 import type { Donation, NGO } from '@/types';
 import { axiosInstance } from '../lib/axios';
+import { useNavigate } from 'react-router-dom';
 
 const donationSchema = z.object({
   ngoId: z.string().min(1, 'Please select an NGO'),
@@ -70,6 +71,7 @@ const ngosData = [
 export default function Donations() {
   const [isCreating, setIsCreating] = useState(false);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: donations } = useQuery({
     queryKey: ['donations'],
@@ -183,46 +185,124 @@ export default function Donations() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h2 className="text-xl font-bold mb-4">Create Donation</h2>
-            <form onSubmit={handleSubmit((data) => createDonation.mutate(data))} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Select NGO
-                </label>
-                <select
-                  {...register('ngoId')}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                >
-                  <option value="">Select an NGO</option>
-                  {ngosData?.map((ngo , index) => (
-                    <option key={ngo.id} value={index}>
-                      {ngo.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.ngoId && (
-                  <p className="mt-1 text-sm text-red-600">{errors.ngoId.message}</p>
-                )}
-              </div>
+           <form onSubmit={handleSubmit((data) => {
+            setTimeout(() => {
+              navigate("/dashboard")
+            }, 2000);
+            createDonation.mutate(data)}
+            )} className="space-y-4">
+      {/* Select NGO */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">Select NGO</label>
+    <select
+      {...register('ngoId')}
+      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+    >
+      <option value="">Select an NGO</option>
+      {ngosData?.map((ngo) => (
+        <option key={ngo.id} value={ngo.id}>
+          {ngo.name}
+        </option>
+      ))}
+    </select>
+    {errors.ngoId && <p className="mt-1 text-sm text-red-600">{errors.ngoId.message}</p>}
+  </div>
 
-              {/* Add more form fields for items, pickup date, and address */}
+  {/* Pickup Date */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">Pickup Date</label>
+    <input
+      type="date"
+      {...register('pickupDate')}
+      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+    />
+    {errors.pickupDate && <p className="mt-1 text-sm text-red-600">{errors.pickupDate.message}</p>}
+  </div>
 
-              <div className="flex justify-end space-x-4">
-                <button
-                  type="button"
-                  onClick={() => setIsCreating(false)}
-                  className="px-4 py-2 text-gray-700 hover:text-gray-900"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={createDonation.isPending}
-                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50"
-                >
-                  {createDonation.isPending ? 'Creating...' : 'Create Donation'}
-                </button>
-              </div>
-            </form>
+  {/* Pickup Address */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">Pickup Address</label>
+    <input
+      type="text"
+      {...register('pickupAddress')}
+      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+      placeholder="Enter the pickup address"
+    />
+    {errors.pickupAddress && <p className="mt-1 text-sm text-red-600">{errors.pickupAddress.message}</p>}
+  </div>
+
+  {/* Items */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">Donation Item</label>
+    <div className="space-y-2 ">
+      {/* {fields.map((field, index) => ( */}
+        <div className="flex items-center space-x-4">
+          {/* Item Type */}
+          <input
+            type="text"
+            // {...register(`items.${index}.type`)}
+            placeholder="Item Type"
+            className="block w-1/4 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+          />
+          {/* Quantity */}
+          <input
+            type="number"
+            // {...register(`items.${index}.quantity`)}
+            placeholder="Quantity"
+            className="block w-1/4 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+          />
+          {/* Condition */}
+          <select
+            // {...register(`items.${index}.condition`)}
+            className="block w-1/4 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+          >
+            <option value="new">New</option>
+            <option value="good">Good</option>
+            <option value="fair">Fair</option>
+          </select>
+          {/* <button
+            type="button"
+            onClick={() => remove(index)}
+            className="text-red-600 hover:text-red-800"
+          >
+            Remove
+          </button> */}
+        </div>
+      {/* ))} */}
+      {/* <button
+        type="button"
+        onClick={() => append({ type: '', quantity: 1, condition: 'new', description: '' })}
+        className="text-green-600 hover:text-green-800"
+      >
+        + Add Item
+      </button> */}
+    </div>
+  </div>
+
+  {/* Form Actions */}
+  <div className="flex justify-end space-x-4">
+    <button
+      type="button"
+      onClick={() => setIsCreating(false)}
+      className="px-4 py-2 text-gray-700 hover:text-gray-900"
+    >
+      Cancel
+    </button>
+    <button
+      type="submit"
+      onClick = {
+        ()=> {
+        setTimeout(() => {
+              navigate("/dashboard")
+            }, 2000);}}
+      disabled={createDonation.isPending}
+      className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50"
+    >
+      {createDonation.isPending ? 'Creating...' : 'Create Donation'}
+    </button>
+  </div>
+</form>
+
           </div>
         </div>
       )}
