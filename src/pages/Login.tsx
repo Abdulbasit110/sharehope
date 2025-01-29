@@ -1,18 +1,18 @@
 // @ts-nocheck
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Loader2 } from 'lucide-react';
-import { useAuthStore } from '../store/auth';
-import image from '../assets/images/clothing-donation.jpg';
-import { axiosInstance } from '../lib/axios';
-import { toast } from 'react-toastify';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Loader2 } from "lucide-react";
+import { useAuthStore } from "../store/auth";
+import image from "../assets/images/clothing-donation.jpg";
+import { axiosInstance } from "../lib/axios";
+import { toast } from "react-toastify";
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -33,14 +33,16 @@ export default function Login() {
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post('/users/login', data);
-      const {user , accessToken} = response.data.message;
+      const response = await axiosInstance.post("/users/login", data);
+      const { user, accessToken } = response.data.message;
       setAuth(user, accessToken);
-      toast.success('Login successful! Redirecting...');
-      navigate(user.role === 'admin' ? '/admin' : '/dashboard');
+      toast.success("Login successful! Redirecting...");
+      navigate(user.role === "admin" ? "/admin" : "/dashboard");
     } catch (error) {
-      toast.error(error?.response?.data?.message || 'Login failed. Please try again.');
-      console.error('Login error:', error);
+      toast.error(
+        error?.response?.data?.message || "Login failed. Please try again."
+      );
+      console.error("Login error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -62,10 +64,12 @@ export default function Login() {
         {/* Right Form Section */}
         <div className="flex-1 p-8 md:p-12">
           <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-6">
-            Welcome Back to <span className="text-green-600">Your Dashboard!</span>
+            Welcome Back to{" "}
+            <span className="text-green-600">Your Dashboard!</span>
           </h1>
           <p className="text-sm text-gray-600 text-center mb-8">
-            Log in to continue contributing to meaningful causes and making a difference!
+            Log in to continue contributing to meaningful causes and making a
+            difference!
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -80,16 +84,18 @@ export default function Login() {
               <input
                 type="email"
                 id="email"
-                {...register('email')}
+                {...register("email")}
                 className={`mt-1 block w-full px-4 py-2 rounded-md bg-gray-50 border ${
                   errors.email
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:border-green-500 focus:ring-green-500"
                 } shadow-sm`}
                 placeholder="Enter your email"
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -104,16 +110,18 @@ export default function Login() {
               <input
                 type="password"
                 id="password"
-                {...register('password')}
+                {...register("password")}
                 className={`mt-1 block w-full px-4 py-2 rounded-md bg-gray-50 border ${
                   errors.password
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:border-green-500 focus:ring-green-500"
                 } shadow-sm`}
                 placeholder="Enter your password"
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -126,15 +134,18 @@ export default function Login() {
               {isLoading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
-                'Login'
+                "Login"
               )}
             </button>
           </form>
 
           {/* Footer Section */}
           <p className="mt-6 text-sm text-center text-gray-600">
-            Don't have an account?{' '}
-            <Link to="/registration" className="text-green-700 font-bold hover:underline">
+            Don't have an account?{" "}
+            <Link
+              to="/registration"
+              className="text-green-700 font-bold hover:underline"
+            >
               Create an Account
             </Link>
           </p>

@@ -4,7 +4,8 @@ import { Recycle, LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navbar() {
-  const { user,logout } = useAuthStore();
+  const {user, logout } = useAuthStore();
+  
   const navigate = useNavigate();
 
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
