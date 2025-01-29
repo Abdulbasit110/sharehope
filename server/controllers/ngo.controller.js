@@ -5,8 +5,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadCloudinary } from "../utils/cloudinary.js";
-import bcrypt from 'bcryptjs';
-
+import bcrypt from "bcryptjs";
 
 // TOKENS
 const generateAccessAndRefreshToken = async (userId) => {
@@ -24,22 +23,33 @@ const generateAccessAndRefreshToken = async (userId) => {
 
 // Sign Up Route
 export const registerNgo = asyncHandler(async (req, res) => {
-// GET DATA FROM NGO
-  const { name ,email, password, address, phone, description, location, status, website, establishedYear } = req.body;
-    // VALIDATION - NOT EMPTY
-    console.log("test",req.body)
-    // CHECK FOR (username and email) DUPLICATION
-    const existedUser = await Ngo.findOne({
+  // GET DATA FROM NGO
+  const {
+    name,
+    email,
+    password,
+    address,
+    phone,
+    description,
+    location,
+    status,
+    website,
+    establishedYear,
+  } = req.body;
+  // VALIDATION - NOT EMPTY
+  console.log("test", req.body);
+  // CHECK FOR (username and email) DUPLICATION
+  const existedUser = await Ngo.findOne({
     $or: [{ name }, { email }, { phone }],
-    });
+  });
 
-    if (existedUser) {
+  if (existedUser) {
     throw new ApiError(409, "Ngo with email or username already exists");
-    }
-    console.log("existing" , existedUser)
+  }
+  console.log("existing", existedUser);
 
-    // CREATE OBJECT
-    const user = await Ngo.create({
+  // CREATE OBJECT
+  const user = await Ngo.create({
     name,
     email,
     password,
@@ -50,24 +60,28 @@ export const registerNgo = asyncHandler(async (req, res) => {
     description,
     website,
     establishedYear,
-    });
-    // REMOVE PASSWORD RESPONSE
-    const createdNgo = await Ngo.findById(user._id).select("-password");
-    console.log("created",createdNgo)
-    // CHECK FOR USER CREATION
-    if (!createdNgo) {
+  });
+  // REMOVE PASSWORD RESPONSE
+  const createdNgo = await Ngo.findById(user._id).select("-password");
+  console.log("created", createdNgo);
+  // CHECK FOR USER CREATION
+  if (!createdNgo) {
     throw new ApiError(500, "Someting went wrong while registration the user");
-    }
-    // SEND EMAIL
-    console.log(createdNgo)
-    await sendEmail({ _id: createdNgo._id, email: createdNgo.email });
+  }
+  // SEND EMAIL
+  console.log(createdNgo);
+  await sendEmail({ _id: createdNgo._id, email: createdNgo.email });
 
-    // RETURN RESPONSE
+  // RETURN RESPONSE
 
-    return res
+  return res
     .status(201)
     .json(
-        new ApiResponse(200, createdNgo, "Verification Code Sent Successfully ang ngo created successfully")
+      new ApiResponse(
+        200,
+        createdNgo,
+        "Verification Code Sent Successfully ang ngo created successfully"
+      )
     );
 });
 
@@ -127,95 +141,90 @@ export const loginNgo = asyncHandler(async (req, res) => {
     );
 });
 
-
 // VERIFY EMAIL
 export const verifyEmailNgo = asyncHandler(async (req, res) => {
+  // GET OTP AND USER ID FROM USER
 
-// GET OTP AND USER ID FROM USER
+  const { otp, userId } = req.body;
+  console.log(otp, userId);
 
-const { otp, userId } = req.body;
-console.log(otp, userId);
+  // CHECK FOR USER ID AND OTP
 
-// CHECK FOR USER ID AND OTP
-
-if (!userId || !otp) {
+  if (!userId || !otp) {
     throw Error("Empty otp details are not allowed");
-} else {
-    // FIND OTP AND USER 
+  } else {
+    // FIND OTP AND USER
     const verificationResponse = await UserOTP.find({
-    userId,
+      userId,
     });
     console.log(verificationResponse);
     // CHECK FOR OTP AND USER
     if (verificationResponse.length <= 0) {
-    throw Error(
+      throw Error(
         "Account record does'nt exit or has been verified already. Please log in."
-    );
+      );
     } else {
-    const { expiresAt } = verificationResponse[0];  
+      const { expiresAt } = verificationResponse[0];
 
-    const hashedOTP = verificationResponse[0].otp;
+      const hashedOTP = verificationResponse[0].otp;
 
-    if (expiresAt < Date.now()) {
+      if (expiresAt < Date.now()) {
         await UserOTP.deleteMany({ userId });
 
         throw new Error("Code has expired. Please request again.");
-    } else {
-        const isOTPMatched = await bcrypt.compare( otp , hashedOTP );
+      } else {
+        const isOTPMatched = await bcrypt.compare(otp, hashedOTP);
         if (!isOTPMatched) {
-        throw new Error( "Invalid OTP. Please try again." );
+          throw new Error("Invalid OTP. Please try again.");
         } else {
-        const updatedUser = await Ngo.findByIdAndUpdate(
+          const updatedUser = await Ngo.findByIdAndUpdate(
             userId,
             { isVerified: true },
             { new: true }
-        );
-        await UserOTP.deleteMany({ userId });
+          );
+          await UserOTP.deleteMany({ userId });
 
-        res.status(200).json({
+          res.status(200).json({
             _id: updatedUser._id,
             username: updatedUser.username,
             email: updatedUser.email,
             isVerified: updatedUser.isVerified,
-        });
+          });
         }
+      }
     }
-    }
-}
+  }
 });
-
 
 // RESEND OTP
-export  const resendOTPNgo = asyncHandler( async (req, res) => {
-    // GET USER ID AND EMAIL FROM USER
-    const { userId, email } = req.body;
-    if (!userId || !email) {
-        throw Error("Empty user details are not allowed");
-    } else {
-        await UserOTP.deleteMany({ userId });
-        await sendEmail({ _id: userId , email }, res);
-        return res
-        .status(200)
-        .json(new ApiResponse(200, {}, "Verification Code Sent Successfully"));
-    }
+export const resendOTPNgo = asyncHandler(async (req, res) => {
+  // GET USER ID AND EMAIL FROM USER
+  const { userId, email } = req.body;
+  if (!userId || !email) {
+    throw Error("Empty user details are not allowed");
+  } else {
+    await UserOTP.deleteMany({ userId });
+    await sendEmail({ _id: userId, email }, res);
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Verification Code Sent Successfully"));
+  }
 });
-
 
 // LOGOUT
 export const logoutNgo = asyncHandler(async (req, res) => {
-console.log(req.ngo);
-const options = {
+  console.log(req.ngo);
+  const options = {
     http: true,
     secure: true,
-};
+  };
 
-//   RETURN RESPONSE
-return res
+  //   RETURN RESPONSE
+  return res
     .status(200)
     .clearCookie("accessToken", options)
     .json(new ApiResponse(200, {}, "Ngo Logged Out"));
 });
-
 
 // GET CURRENT NGO
 export const getCurrentNgo = asyncHandler(async (req, res) => {
@@ -232,7 +241,7 @@ export const getCurrentNgo = asyncHandler(async (req, res) => {
 });
 
 export const getAllNgos = asyncHandler(async (req, res) => {
-  console.log("first")
+  console.log("first");
   // Extract and validate query parameters
   const { page = 1, limit = 10, search = "" } = req.query;
 
@@ -276,76 +285,74 @@ export const getAllNgos = asyncHandler(async (req, res) => {
     totalPages: Math.ceil(totalNgos / pageSize),
   };
 
-  res.status(200).json(new ApiResponse(200, response, "NGOs fetched successfully"));
+  res
+    .status(200)
+    .json(new ApiResponse(200, response, "NGOs fetched successfully"));
 });
-
-
 
 // UPDATE AVATAR
 export const updateNgoAvatar = asyncHandler(async (req, res) => {
-//  GET NEW AVATAR FROM USER
-console.log(req.file);
+  //  GET NEW AVATAR FROM USER
+  console.log(req.file);
 
-const avatarLoacalPath = req.file?.path;
-console.log(avatarLoacalPath);
+  const avatarLoacalPath = req.file?.path;
+  console.log(avatarLoacalPath);
 
-// CEHCK FOR THE LOCAL AVATAR
+  // CEHCK FOR THE LOCAL AVATAR
 
-if (!avatarLoacalPath) {
-  throw new ApiError(400, "Avatar file is misssing");
-}
+  if (!avatarLoacalPath) {
+    throw new ApiError(400, "Avatar file is misssing");
+  }
 
-// UPLOAD ON CLOUDINARY
+  // UPLOAD ON CLOUDINARY
 
-const avatar = await uploadCloudinary(avatarLoacalPath);
+  const avatar = await uploadCloudinary(avatarLoacalPath);
 
-// CHECK FOR AVATAR
+  // CHECK FOR AVATAR
 
-if (!avatar) {
-  throw new ApiError(400, "Error while uploading on avatar");
-}
+  if (!avatar) {
+    throw new ApiError(400, "Error while uploading on avatar");
+  }
 
-// FIND AND UPDATE CURRENT USER AVATAR
+  // FIND AND UPDATE CURRENT USER AVATAR
 
-const user = await Ngo.findOneAndUpdate(
-  req.user?._id,
-  {
-    $set: { avatar: avatar.url },
-  },
-  { new: true }
-).select("-password");
+  const user = await Ngo.findOneAndUpdate(
+    req.user?._id,
+    {
+      $set: { avatar: avatar.url },
+    },
+    { new: true }
+  ).select("-password");
 
-// RETURN RESPONSE
+  // RETURN RESPONSE
 
-return res
-  .status(200)
-  .json(new ApiResponse(200, user, "Avatar Image Updated Succesfully"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Avatar Image Updated Succesfully"));
 });
-
-
 
 // CHANGE PASSWORD
 export const changeNgoPassword = asyncHandler(async (req, res) => {
   // GET NEW AND OLD PASSWORD
   const { oldPassword, newPassword } = req.body;
-  
+
   if (!oldPassword || !newPassword) {
     throw new ApiError(400, "All Required");
   }
   // console.log(req.user);
-  
+
   // GET CURRENT USER
   const ngo = await Ngo.findById(req.ngo?._id);
   if (!ngo) {
     throw new ApiError("No Ngo Found");
   }
-  
+
   // CHECK OLD PSWRD
   const isPasswordCorrect = await ngo.isPasswordCorrect(oldPassword);
   if (!isPasswordCorrect) {
     throw new ApiError(400, "Invalid old Password");
   }
-  
+
   // REPLACE OLD TO NEW PSWRD
   ngo.password = newPassword;
   await ngo.save({ validateBeforeSave: false });
